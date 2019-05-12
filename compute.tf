@@ -85,3 +85,4 @@ resource "azurerm_virtual_machine" "eschoolprod" {
 
 
 
+

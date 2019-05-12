@@ -16,7 +16,7 @@ variable "asure_tenant_id" {
 }
 
 #Group
-variable "prefix" {
+variable prefix {
   description = "The prefix used for all resources in this example"
   default = "eschool"
 }
@@ -84,6 +84,20 @@ variable "disable_password_authentication" {
   default = "false"
 }
 
+#Kubernetes
 
+variable "agent_count" {
+  description = "Kubernetes count nodes"
+  default = 3
+}
 
+#Azure SQL database
+variable "administrator_login" {
+  description = "Azure SQL database administrator login"
+  default = "4dm1n157r470r"
+}
 
+variable "administrator_login_password" {
+  description = "Azure SQL database administrator login"
+  default = "4-v3ry-53cr37-p455w0rd"
+}
