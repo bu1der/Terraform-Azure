@@ -88,7 +88,22 @@ variable "disable_password_authentication" {
 
 variable "agent_count" {
   description = "Kubernetes count nodes"
-  default = 3
+  default = 1
+}
+
+variable "vm_size_kub" {
+  description = "Kubernetes virtual machine type"
+  default = "Standard_DS2_v2"
+}
+
+variable "os_type" {
+  description = "Kubernetes OS type"
+  default = "Linux"
+}
+
+variable "os_disk_size_gb" {
+  description = "Kubernetes count nodes"
+  default = 30
 }
 
 #Azure SQL database

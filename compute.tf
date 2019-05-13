@@ -69,7 +69,7 @@ resource "azurerm_virtual_machine" "eschoolprod" {
   }
 
   os_profile {
-    computer_name = "${var.prefix}"
+    computer_name  = "${var.prefix}"
     admin_username = "${var.admin_username}"
     admin_password = "${var.admin_password}"
   }
