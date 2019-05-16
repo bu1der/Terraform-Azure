@@ -1,3 +1,4 @@
+#Kubernetes
 data "azurerm_client_config" "current" {}
 
 output "account_id" {
@@ -27,3 +28,11 @@ output "cluster_ca_certificate" {
 output "host" {
   value = "${azurerm_kubernetes_cluster.eschoolprod.kube_config.0.host}"
 }
+#Bastion
+# output "vm_fqdn" {
+#   value = "${azurerm_public_ip.example.fqdn}"
+# }
+
+# output "ssh_command" {
+#   value = "ssh ${local.admin_username}@${azurerm_public_ip.example.fqdn}"
+# }

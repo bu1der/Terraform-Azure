@@ -1,47 +1,32 @@
-# Create a resource group
-resource "azurerm_resource_group" "eschoolprod" {
-  name     = "${var.prefix}-resources"
-  location = "${var.location}"
-}
-
-resource "azurerm_virtual_network" "eschoolprod" {
-  name                = "${var.prefix}-network"
-  resource_group_name = "${azurerm_resource_group.eschoolprod.name}"
-  location            = "${azurerm_resource_group.eschoolprod.location}"
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurerm_subnet" "eschoolprod" {
-  name                 = "${var.prefix}-subnetwork"
-  resource_group_name  = "${azurerm_resource_group.eschoolprod.name}"
-  virtual_network_name = "${azurerm_virtual_network.eschoolprod.name}"
-  address_prefix       = "10.0.1.0/24"
+locals {
+  virtual_machine_name = "${var.prefix}-vm"
+  admin_username       = "testadmin"
 }
 
 resource "azurerm_network_interface" "eschoolprod" {
-  name                = "${var.prefix}-net"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.eschoolprod.name}"
+  name                      = "${azurerm_resource_group.eschoolprod.name}-nic"
+  location                  = "${azurerm_resource_group.eschoolprod.location}"
+  resource_group_name       = "${azurerm_resource_group.eschoolprod.name}"
+  network_security_group_id = "${azurerm_network_security_group.bastion.id}"
 
   ip_configuration {
-    name                          = "${var.prefix}-ipconf"
-    subnet_id                     = "${azurerm_subnet.eschoolprod.id}"
-    private_ip_address_allocation = "dynamic"
+    name                          = "internal"
+    subnet_id                     = "${azurerm_subnet.bastion.id}"
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = "${azurerm_public_ip.eschoolprod.id}"
   }
 }
 
-resource "azurerm_managed_disk" "eschoolprod" {
-  name                  = "${var.prefix}-data"
-  location              = "${var.location}"
-  resource_group_name   = "${azurerm_resource_group.eschoolprod.name}"
-  storage_account_type  = "${var.type}"
-  create_option         = "Empty"
-  disk_size_gb          = "${var.disk_size}"
+resource "azurerm_public_ip" "eschoolprod" {
+  name                = "${var.prefix}-bastionpip"
+  location            = "${azurerm_resource_group.eschoolprod.location}"
+  resource_group_name = "${azurerm_resource_group.eschoolprod.name}"
+  allocation_method   = "Dynamic"
 }
 
 resource "azurerm_virtual_machine" "eschoolprod" {
-  name                  = "${var.prefix}-vm"
-  location              = "${var.location}"
+  name                  = "${local.virtual_machine_name}"
+  location              = "${azurerm_resource_group.eschoolprod.location}"
   resource_group_name   = "${azurerm_resource_group.eschoolprod.name}"
   network_interface_ids = ["${azurerm_network_interface.eschoolprod.id}"]
   vm_size               = "${var.vm_size}"
@@ -55,12 +40,12 @@ resource "azurerm_virtual_machine" "eschoolprod" {
 
   storage_os_disk {
     name              = "${var.prefix}-osdiskprod"
+    managed_disk_type = "${var.type}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "${var.type}"
   }
 
-  storage_data_disk {
+    storage_data_disk {
     name              = "${var.prefix}-dataprod"
     managed_disk_type = "${var.type}"
     create_option     = "Empty"
@@ -76,13 +61,10 @@ resource "azurerm_virtual_machine" "eschoolprod" {
 
   os_profile_linux_config {
     disable_password_authentication = "${var.disable_password_authentication}"
+
+    # ssh_keys {
+    #   path     = "/home/${local.admin_username}/.ssh/authorized_keys"
+    #   key_data = "${local.public_ssh_key}"
+    # }
   }
-
 }
-
-
-
-
-
-
-

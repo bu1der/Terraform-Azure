@@ -81,7 +81,7 @@ variable "admin_password" {
 
 variable "disable_password_authentication" {
   description = "Disable password authentication"
-  default = "false"
+  default = "true"
 }
 
 #Kubernetes

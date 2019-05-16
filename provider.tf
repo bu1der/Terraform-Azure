@@ -1,4 +1,4 @@
-# Specify the provider (GCP, AWS, Azure)
+# Specify the provider Azure
 provider "azurerm" {
   version = "~> 1.27"
   subscription_id = "${var.azure_subscription_id}"
